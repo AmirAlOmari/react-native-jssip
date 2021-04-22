@@ -1747,16 +1747,18 @@ module.exports = /*#__PURE__*/function (_EventEmitter) {
         // Resolve right away if 'pc.iceGatheringState' is 'complete'.
         if (connection.iceGatheringState === 'complete' && (!constraints || !constraints.iceRestart)) {
           _this13._rtcReady = true;
-          var e = {
-            originator: 'local',
-            type: type,
-            sdp: connection.localDescription.sdp
-          };
-          debug('emit "sdp"');
+          return connection.createOffer(constraints).then(function (desc) {
+            var e = {
+              originator: 'local',
+              type: type,
+              sdp: desc.sdp
+            };
+            debug('emit "sdp"');
 
-          _this13.emit('sdp', e);
+            _this13.emit('sdp', e);
 
-          return Promise.resolve(e.sdp);
+            return desc.sdp;
+          });
         } // Add 'pc.onicencandidate' event handler to resolve on last candidate.
 
 
@@ -1770,16 +1772,18 @@ module.exports = /*#__PURE__*/function (_EventEmitter) {
             connection.removeEventListener('icegatheringstatechange', iceGatheringStateListener);
             finished = true;
             _this13._rtcReady = true;
-            var e = {
-              originator: 'local',
-              type: type,
-              sdp: connection.localDescription.sdp
-            };
-            debug('emit "sdp"');
+            connection.createOffer(constraints).then(function (desc) {
+              var e = {
+                originator: 'local',
+                type: type,
+                sdp: desc.sdp
+              };
+              debug('emit "sdp"');
 
-            _this13.emit('sdp', e);
+              _this13.emit('sdp', e);
 
-            resolve(e.sdp);
+              resolve(desc.sdp);
+            });
           };
 
           connection.addEventListener('icecandidate', iceCandidateListener = function iceCandidateListener(event) {
