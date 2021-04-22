@@ -1,0 +1,5 @@
+{
+  "hooks": {
+    "pre-push": "npm run prepublishOnly && git add lib-es5"
+  }
+}
